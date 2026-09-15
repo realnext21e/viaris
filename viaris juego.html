@@ -1,0 +1,4835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VIARIS | Evaluación de Seguridad Vial</title>
+
+<style>
+
+/* =========================================================
+   PALETA DE COLORES BASADA EN LA IMAGEN
+========================================================= */
+
+:root {
+    --green-dark: #285d22;
+    --green: #4f9d2f;
+    --green-light: #b8f23f;
+    --green-soft: #eaf5df;
+
+    --navy: #073b4c;
+    --navy-dark: #062d3a;
+
+    --white: #ffffff;
+    --background: #f2f7f0;
+
+    --text: #24352b;
+    --gray: #718076;
+    --border: #b8c7ba;
+
+    --success: #318344;
+    --success-bg: #e2f4e4;
+
+    --danger: #a83b3b;
+    --danger-bg: #fae3e3;
+
+    --warning: #a36c16;
+    --warning-bg: #fff1cf;
+
+    --shadow: 0 18px 45px rgba(25, 66, 37, .13);
+}
+
+
+/* =========================================================
+   CONFIGURACIÓN GENERAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--text);
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(184,242,63,.18),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #f8fbf7,
+            #e5efe3
+        );
+}
+
+button,
+select {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.app {
+    width: 100%;
+    min-height: 100vh;
+    padding: 25px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+.screen {
+    display: none;
+    animation: fadeIn .4s ease;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   PANTALLA DE INICIO
+========================================================= */
+
+.welcome {
+    min-height: calc(100vh - 50px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.welcome-card {
+    width: 100%;
+
+    background: rgba(255,255,255,.97);
+
+    border-radius: 30px;
+
+    padding: 45px;
+
+    box-shadow: var(--shadow);
+
+    text-align: center;
+
+    border-top: 6px solid var(--green);
+}
+
+.brand-mark {
+    width: 95px;
+    height: 95px;
+
+    margin: 0 auto 20px;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--green-light),
+            var(--green),
+            var(--navy)
+        );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    font-size: 28px;
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    box-shadow:
+        0 12px 28px rgba(79,157,47,.25);
+}
+
+h1 {
+    font-size: clamp(2rem, 5vw, 3.4rem);
+
+    margin-bottom: 12px;
+
+    color: var(--green-dark);
+}
+
+h1 span {
+    color: var(--navy);
+}
+
+.subtitle {
+    font-size: 1.15rem;
+
+    color: var(--green-dark);
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+}
+
+.description {
+    max-width: 780px;
+
+    margin: auto;
+
+    color: var(--gray);
+
+    line-height: 1.7;
+
+    font-size: 1.03rem;
+}
+
+
+/* =========================================================
+   CONFIGURACIÓN DE EVALUACIÓN
+========================================================= */
+
+.configuration {
+    margin: 35px auto;
+
+    max-width: 850px;
+
+    background: var(--green-soft);
+
+    border-radius: 22px;
+
+    padding: 28px;
+
+    text-align: left;
+
+    border: 1px solid #d4e6cf;
+}
+
+.configuration h2 {
+    color: var(--green-dark);
+
+    margin-bottom: 8px;
+}
+
+.configuration-description {
+    color: var(--gray);
+
+    line-height: 1.6;
+
+    margin-bottom: 25px;
+}
+
+
+/* =========================================================
+   SELECTOR DE DIFICULTAD
+========================================================= */
+
+.field-title {
+    display: block;
+
+    font-weight: bold;
+
+    color: var(--green-dark);
+
+    margin-bottom: 10px;
+}
+
+.difficulty-options {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+}
+
+.difficulty-btn {
+    border: 2px solid var(--border);
+
+    background: white;
+
+    border-radius: 14px;
+
+    padding: 16px 10px;
+
+    color: var(--text);
+
+    transition: .2s;
+
+    font-weight: bold;
+}
+
+.difficulty-btn:hover {
+    transform: translateY(-2px);
+
+    border-color: var(--green);
+}
+
+.difficulty-btn.selected {
+    background:
+        linear-gradient(
+            135deg,
+            var(--green),
+            var(--green-dark)
+        );
+
+    color: white;
+
+    border-color: var(--green-dark);
+}
+
+.difficulty-btn.nightmare {
+    border-color: var(--navy);
+
+    color: var(--navy);
+}
+
+.difficulty-btn.nightmare.selected {
+    background:
+        linear-gradient(
+            135deg,
+            var(--navy),
+            var(--navy-dark)
+        );
+
+    color: white;
+}
+
+.difficulty-info {
+    display: block;
+
+    margin-top: 6px;
+
+    font-size: .75rem;
+
+    font-weight: normal;
+
+    opacity: .8;
+}
+
+
+/* =========================================================
+   CANTIDAD DE PREGUNTAS
+========================================================= */
+
+.question-counts {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap: 10px;
+}
+
+.count-btn {
+    border: 2px solid var(--border);
+
+    background: white;
+
+    border-radius: 13px;
+
+    padding: 14px 5px;
+
+    font-weight: bold;
+
+    color: var(--text);
+
+    transition: .2s;
+}
+
+.count-btn:hover {
+    border-color: var(--green);
+
+    transform: translateY(-2px);
+}
+
+.count-btn.selected {
+    background: var(--green);
+
+    color: white;
+
+    border-color: var(--green-dark);
+}
+
+.count-btn.disabled {
+    opacity: .3;
+
+    cursor: not-allowed;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   INFORMACIÓN
+========================================================= */
+
+.info-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+
+    margin: 25px 0;
+}
+
+.info-item {
+    background: white;
+
+    padding: 18px 10px;
+
+    border-radius: 16px;
+
+    border: 1px solid #dbe7da;
+
+    text-align: center;
+}
+
+.info-icon {
+    width: 38px;
+    height: 38px;
+
+    margin: 0 auto 8px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--green-soft);
+
+    color: var(--green-dark);
+
+    font-weight: bold;
+}
+
+.info-item strong {
+    display: block;
+
+    color: var(--green-dark);
+
+    margin-bottom: 4px;
+}
+
+.info-item small {
+    color: var(--gray);
+}
+
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+.primary-btn {
+    border: none;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--green-light),
+            var(--green),
+            var(--navy)
+        );
+
+    color: white;
+
+    padding: 16px 32px;
+
+    border-radius: 14px;
+
+    font-size: 1rem;
+
+    font-weight: bold;
+
+    box-shadow:
+        0 10px 25px rgba(35,93,45,.22);
+
+    transition: .2s;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(35,93,45,.28);
+}
+
+.secondary-btn {
+    border: 2px solid var(--border);
+
+    background: white;
+
+    color: var(--green-dark);
+
+    padding: 14px 25px;
+
+    border-radius: 14px;
+
+    font-weight: bold;
+}
+
+
+/* =========================================================
+   HEADER DEL QUIZ
+========================================================= */
+
+.game-header {
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 20px;
+
+    box-shadow: var(--shadow);
+
+    margin-bottom: 20px;
+
+    border-top: 4px solid var(--green);
+}
+
+.header-row {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 15px;
+}
+
+.question-counter {
+    color: var(--green-dark);
+
+    font-size: 1.05rem;
+}
+
+.stats {
+    display: flex;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+}
+
+.stat {
+    background: var(--green-soft);
+
+    padding: 8px 13px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    color: var(--green-dark);
+}
+
+.progress-bg {
+    width: 100%;
+
+    height: 12px;
+
+    background: #dce7dc;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+
+    width: 0%;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--green-light),
+            var(--green),
+            var(--navy)
+        );
+
+    transition: width .4s ease;
+}
+
+
+/* =========================================================
+   TARJETA DE PREGUNTA
+========================================================= */
+
+.question-card {
+    background: white;
+
+    padding: 35px;
+
+    border-radius: 24px;
+
+    box-shadow: var(--shadow);
+}
+
+.tags {
+    margin-bottom: 15px;
+}
+
+.tag {
+    display: inline-block;
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    font-size: .82rem;
+
+    font-weight: bold;
+
+    margin-right: 5px;
+}
+
+.category {
+    background: var(--green-soft);
+
+    color: var(--green-dark);
+}
+
+.difficulty {
+    background: #e2edf1;
+
+    color: var(--navy);
+}
+
+.nightmare-tag {
+    background: var(--navy);
+
+    color: white;
+}
+
+.scenario {
+    background: #f5f8f4;
+
+    border-left: 5px solid var(--green);
+
+    padding: 22px;
+
+    border-radius: 15px;
+
+    margin-bottom: 25px;
+
+    line-height: 1.7;
+}
+
+.scenario-title {
+    font-weight: bold;
+
+    color: var(--green-dark);
+
+    margin-bottom: 8px;
+}
+
+
+/* =========================================================
+   RESPUESTAS
+========================================================= */
+
+.answers {
+    display: grid;
+
+    gap: 12px;
+}
+
+.answer {
+    width: 100%;
+
+    padding: 17px;
+
+    border: 2px solid var(--border);
+
+    background: white;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    display: flex;
+
+    gap: 12px;
+
+    align-items: flex-start;
+
+    line-height: 1.5;
+
+    font-size: 1rem;
+
+    color: var(--text);
+
+    transition: .2s;
+}
+
+.answer:hover:not(:disabled) {
+    border-color: var(--green);
+
+    background: #f2f8ef;
+
+    transform: translateX(3px);
+}
+
+.answer-letter {
+    min-width: 34px;
+
+    height: 34px;
+
+    border-radius: 10px;
+
+    background: var(--green-soft);
+
+    color: var(--green-dark);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: bold;
+}
+
+.answer.correct {
+    border-color: var(--success);
+
+    background: var(--success-bg);
+
+    color: #246331;
+}
+
+.answer.correct .answer-letter {
+    background: var(--success);
+
+    color: white;
+}
+
+.answer.incorrect {
+    border-color: var(--danger);
+
+    background: var(--danger-bg);
+
+    color: #812b2b;
+}
+
+.answer.incorrect .answer-letter {
+    background: var(--danger);
+
+    color: white;
+}
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+.feedback {
+    display: none;
+
+    margin-top: 20px;
+
+    padding: 20px;
+
+    border-radius: 15px;
+
+    line-height: 1.6;
+}
+
+.feedback.show {
+    display: block;
+}
+
+.feedback.correct {
+    background: var(--success-bg);
+
+    color: #246331;
+
+    border: 1px solid #afd7b6;
+}
+
+.feedback.incorrect {
+    background: var(--danger-bg);
+
+    color: #812b2b;
+
+    border: 1px solid #e6b6b6;
+}
+
+.next {
+    display: none;
+
+    text-align: right;
+
+    margin-top: 20px;
+}
+
+.next.show {
+    display: block;
+}
+
+
+/* =========================================================
+   RESULTADOS
+========================================================= */
+
+.result-card {
+    background: white;
+
+    padding: 45px;
+
+    border-radius: 28px;
+
+    box-shadow: var(--shadow);
+
+    text-align: center;
+
+    border-top: 6px solid var(--green);
+}
+
+.result-status {
+    width: 80px;
+    height: 80px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--green-light),
+            var(--green)
+        );
+
+    color: white;
+
+    font-size: 1.4rem;
+
+    font-weight: bold;
+}
+
+.result-card h2 {
+    font-size: 2.4rem;
+
+    margin: 10px 0;
+
+    color: var(--green-dark);
+}
+
+.result-description {
+    max-width: 750px;
+
+    margin: 15px auto;
+
+    line-height: 1.7;
+
+    color: var(--gray);
+
+    font-size: 1.05rem;
+}
+
+.level {
+    display: inline-block;
+
+    padding: 10px 18px;
+
+    background: var(--green-soft);
+
+    color: var(--green-dark);
+
+    border-radius: 30px;
+
+    font-weight: bold;
+
+    margin: 10px 0 25px;
+}
+
+
+/* =========================================================
+   RESULTADOS NUMÉRICOS
+========================================================= */
+
+.result-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+
+    margin: 25px 0;
+}
+
+.result-box {
+    background: #f5f8f4;
+
+    padding: 20px 10px;
+
+    border-radius: 17px;
+
+    border: 1px solid #dce8db;
+}
+
+.result-number {
+    font-size: 2rem;
+
+    color: var(--navy);
+
+    font-weight: bold;
+
+    margin-bottom: 5px;
+}
+
+.result-box small {
+    color: var(--gray);
+}
+
+
+/* =========================================================
+   BARRA DE PROMEDIO
+========================================================= */
+
+.average-section {
+    max-width: 750px;
+
+    margin: 30px auto;
+
+    text-align: left;
+}
+
+.average-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+
+    font-weight: bold;
+
+    color: var(--green-dark);
+}
+
+.average-bg {
+    width: 100%;
+
+    height: 18px;
+
+    border-radius: 20px;
+
+    background: #dfe8df;
+
+    overflow: hidden;
+}
+
+.average-fill {
+    height: 100%;
+
+    width: 0%;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--green-light),
+            var(--green),
+            var(--navy)
+        );
+
+    transition: width 1s ease;
+}
+
+
+/* =========================================================
+   INSIGNIAS
+========================================================= */
+
+.badges {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+
+    margin-top: 20px;
+}
+
+.badge {
+    padding: 20px 10px;
+
+    border-radius: 15px;
+
+    background: #f8faf7;
+
+    border: 1px solid var(--border);
+}
+
+.badge-symbol {
+    width: 38px;
+    height: 38px;
+
+    margin: 0 auto 8px;
+
+    border-radius: 50%;
+
+    background: var(--green-soft);
+
+    color: var(--green-dark);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+}
+
+.badge.locked {
+    opacity: .3;
+
+    filter: grayscale(1);
+}
+
+
+/* =========================================================
+   RECOMENDACIONES
+========================================================= */
+
+.recommendations {
+    text-align: left;
+
+    background: #f5f8ed;
+
+    border: 1px solid #d7e5c4;
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    margin: 30px 0;
+}
+
+.recommendations h3 {
+    color: var(--green-dark);
+
+    margin-bottom: 10px;
+}
+
+.recommendations ul {
+    padding-left: 20px;
+
+    color: #536452;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   MODO PESADILLA
+========================================================= */
+
+.nightmare-warning {
+    display: none;
+
+    margin-top: 18px;
+
+    padding: 16px;
+
+    border-radius: 12px;
+
+    background: #e5edf0;
+
+    border: 1px solid #b9ccd2;
+
+    color: var(--navy);
+
+    line-height: 1.6;
+}
+
+.nightmare-warning.show {
+    display: block;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width: 800px) {
+
+    .app {
+        padding: 12px;
+    }
+
+    .welcome-card,
+    .question-card,
+    .result-card {
+        padding: 25px 18px;
+    }
+
+    .difficulty-options {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .question-counts {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .info-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .result-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .badges {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .header-row {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+}
+
+@media(max-width: 480px) {
+
+    .difficulty-options {
+        grid-template-columns: 1fr;
+    }
+
+    .result-card h2 {
+        font-size: 1.9rem;
+    }
+
+    .question-card {
+        padding: 20px 15px;
+    }
+
+    .answer {
+        padding: 14px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+<div class="container">
+
+
+<!-- =====================================================
+     PANTALLA DE INICIO
+====================================================== -->
+
+<section id="homeScreen" class="screen active">
+
+<div class="welcome">
+
+<div class="welcome-card">
+
+<div class="brand-mark">
+VIARIS
+</div>
+
+<h1>
+Desafío <span>al Volante</span>
+</h1>
+
+<p class="subtitle">
+Evaluación de conocimientos sobre seguridad vial
+</p>
+
+<p class="description">
+Evalúa tu capacidad para tomar decisiones responsables
+ante diferentes situaciones de tránsito. La evaluación
+combina conocimientos generales, prevención de riesgos
+y escenarios prácticos de conducción.
+</p>
+
+
+<div class="configuration">
+
+<h2>
+Configuración de la evaluación
+</h2>
+
+<p class="configuration-description">
+Selecciona el nivel de dificultad y posteriormente la
+cantidad de preguntas que deseas responder.
+</p>
+
+
+<!-- NIVEL -->
+
+<label class="field-title">
+Nivel de dificultad
+</label>
+
+<div class="difficulty-options">
+
+<button
+class="difficulty-btn selected"
+data-difficulty="Facil"
+>
+
+Fácil
+
+<span class="difficulty-info">
+Conceptos fundamentales
+</span>
+
+</button>
+
+
+<button
+class="difficulty-btn"
+data-difficulty="Intermedio"
+>
+
+Intermedio
+
+<span class="difficulty-info">
+Situaciones habituales
+</span>
+
+</button>
+
+
+<button
+class="difficulty-btn"
+data-difficulty="Dificil"
+>
+
+Difícil
+
+<span class="difficulty-info">
+Mayor análisis
+</span>
+
+</button>
+
+
+<button
+class="difficulty-btn nightmare"
+data-difficulty="Pesadilla"
+>
+
+Pesadilla
+
+<span class="difficulty-info">
+Situaciones críticas
+</span>
+
+</button>
+
+</div>
+
+
+<!-- CANTIDAD -->
+
+<label class="field-title">
+Cantidad de preguntas
+</label>
+
+<div
+class="question-counts"
+id="questionCounts"
+>
+
+<button
+class="count-btn selected"
+data-count="10"
+>
+10
+</button>
+
+<button
+class="count-btn"
+data-count="20"
+>
+20
+</button>
+
+<button
+class="count-btn"
+data-count="30"
+>
+30
+</button>
+
+<button
+class="count-btn"
+data-count="40"
+>
+40
+</button>
+
+<button
+class="count-btn"
+data-count="50"
+>
+50
+</button>
+
+<button
+class="count-btn"
+data-count="60"
+>
+60
+</button>
+
+<button
+class="count-btn"
+data-count="70"
+>
+70
+</button>
+
+<button
+class="count-btn"
+data-count="80"
+>
+80
+</button>
+
+<button
+class="count-btn"
+data-count="90"
+>
+90
+</button>
+
+<button
+class="count-btn"
+data-count="100"
+>
+100
+</button>
+
+</div>
+
+
+<div
+id="nightmareWarning"
+class="nightmare-warning"
+>
+El modo Pesadilla requiere un mínimo de 30 preguntas.
+Las situaciones presentan escenarios realistas,
+respuestas deliberadamente similares y requieren
+analizar cuidadosamente cada alternativa antes de
+responder.
+</div>
+
+</div>
+
+
+<!-- INFORMACIÓN -->
+
+<div class="info-grid">
+
+<div class="info-item">
+
+<div class="info-icon">
+01
+</div>
+
+<strong>Puntuación</strong>
+
+<small>
+Sistema progresivo
+</small>
+
+</div>
+
+
+<div class="info-item">
+
+<div class="info-icon">
+02
+</div>
+
+<strong>Dificultad</strong>
+
+<small>
+Cuatro niveles
+</small>
+
+</div>
+
+
+<div class="info-item">
+
+<div class="info-icon">
+03
+</div>
+
+<strong>Resultados</strong>
+
+<small>
+Promedio y desempeño
+</small>
+
+</div>
+
+
+<div class="info-item">
+
+<div class="info-icon">
+04
+</div>
+
+<strong>Retroalimentación</strong>
+
+<small>
+Análisis de errores
+</small>
+
+</div>
+
+</div>
+
+
+<button
+class="primary-btn"
+onclick="startGame()"
+>
+Comenzar evaluación
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     PANTALLA DEL JUEGO
+====================================================== -->
+
+<section
+id="gameScreen"
+class="screen"
+>
+
+<div class="game-header">
+
+<div class="header-row">
+
+<strong class="question-counter">
+
+Pregunta
+<span id="currentQuestion">1</span>
+
+de
+
+<span id="totalQuestions">10</span>
+
+</strong>
+
+
+<div class="stats">
+
+<div class="stat">
+
+Puntos:
+<span id="score">0</span>
+
+</div>
+
+<div class="stat">
+
+Racha:
+<span id="streak">0</span>
+
+</div>
+
+<div class="stat">
+
+Errores:
+<span id="errors">0</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="progress-bg">
+
+<div
+id="progress"
+class="progress"
+></div>
+
+</div>
+
+</div>
+
+
+<div class="question-card">
+
+
+<div class="tags">
+
+<span
+id="category"
+class="tag category"
+>
+Categoría
+</span>
+
+<span
+id="difficulty"
+class="tag difficulty"
+>
+Dificultad
+</span>
+
+</div>
+
+
+<div class="scenario">
+
+<div class="scenario-title">
+Situación
+</div>
+
+<div id="questionText"></div>
+
+</div>
+
+
+<div
+id="answers"
+class="answers"
+></div>
+
+
+<div
+id="feedback"
+class="feedback"
+>
+
+<h3
+id="feedbackTitle"
+></h3>
+
+<p
+id="feedbackText"
+></p>
+
+</div>
+
+
+<div
+id="nextContainer"
+class="next"
+>
+
+<button
+class="primary-btn"
+onclick="nextQuestion()"
+>
+Siguiente
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     RESULTADOS
+====================================================== -->
+
+<section
+id="resultScreen"
+class="screen"
+>
+
+<div class="result-card">
+
+
+<div
+id="resultStatus"
+class="result-status"
+>
+VIARIS
+</div>
+
+
+<h2>
+Evaluación terminada
+</h2>
+
+<p>
+Estos son los resultados obtenidos en tu evaluación.
+</p>
+
+
+<div
+id="knowledgeLevel"
+class="level"
+>
+Principiante
+</div>
+
+
+<!-- DESCRIPCIÓN -->
+
+<p
+id="performanceDescription"
+class="result-description"
+>
+Descripción del desempeño.
+</p>
+
+
+<!-- RESULTADOS -->
+
+<div class="result-grid">
+
+
+<div class="result-box">
+
+<div
+id="finalScore"
+class="result-number"
+>
+0
+</div>
+
+<small>
+Puntos obtenidos
+</small>
+
+</div>
+
+
+<div class="result-box">
+
+<div
+id="finalPercentage"
+class="result-number"
+>
+0%
+</div>
+
+<small>
+Promedio de aciertos
+</small>
+
+</div>
+
+
+<div class="result-box">
+
+<div
+id="finalCorrect"
+class="result-number"
+>
+0
+</div>
+
+<small>
+Respuestas correctas
+</small>
+
+</div>
+
+
+<div class="result-box">
+
+<div
+id="finalAveragePoints"
+class="result-number"
+>
+0
+</div>
+
+<small>
+Promedio de puntos
+</small>
+
+</div>
+
+</div>
+
+
+<!-- BARRA -->
+
+<div class="average-section">
+
+<div class="average-header">
+
+<span>
+Desempeño general
+</span>
+
+<span id="averageLabel">
+0%
+</span>
+
+</div>
+
+<div class="average-bg">
+
+<div
+id="averageFill"
+class="average-fill"
+></div>
+
+</div>
+
+</div>
+
+
+<!-- INSIGNIAS -->
+
+<h3>
+Reconocimientos obtenidos
+</h3>
+
+
+<div class="badges">
+
+
+<div
+id="badgePerfect"
+class="badge locked"
+>
+
+<div class="badge-symbol">
+100
+</div>
+
+<strong>
+Dominio total
+</strong>
+
+<br>
+
+<small>
+100%
+</small>
+
+</div>
+
+
+<div
+id="badgeSafe"
+class="badge locked"
+>
+
+<div class="badge-symbol">
+80
+</div>
+
+<strong>
+Conductor seguro
+</strong>
+
+<br>
+
+<small>
+80% o más
+</small>
+
+</div>
+
+
+<div
+id="badgeExpert"
+class="badge locked"
+>
+
+<div class="badge-symbol">
+90
+</div>
+
+<strong>
+Experto vial
+</strong>
+
+<br>
+
+<small>
+90% o más
+</small>
+
+</div>
+
+
+<div
+id="badgeStreak"
+class="badge locked"
+>
+
+<div class="badge-symbol">
+5
+</div>
+
+<strong>
+Racha
+</strong>
+
+<br>
+
+<small>
+5 respuestas seguidas
+</small>
+
+</div>
+
+</div>
+
+
+<!-- RECOMENDACIONES -->
+
+<div class="recommendations">
+
+<h3>
+Recomendaciones personalizadas
+</h3>
+
+<ul
+id="recommendationList"
+></ul>
+
+</div>
+
+
+<button
+class="primary-btn"
+onclick="restartGame()"
+>
+Nueva evaluación
+</button>
+
+<br>
+<br>
+
+<button
+class="secondary-btn"
+onclick="goHome()"
+>
+Volver al inicio
+</button>
+
+</div>
+
+</section>
+
+
+</div>
+</div>
+
+
+<script>
+
+/* =========================================================
+   CONFIGURACIÓN
+========================================================= */
+
+const MAX_QUESTIONS = 100;
+
+let selectedQuestionCount = 10;
+
+let selectedDifficulty = "Facil";
+
+let gameQuestions = [];
+
+let currentQuestionIndex = 0;
+
+let score = 0;
+
+let correctAnswers = 0;
+
+let errors = 0;
+
+let streak = 0;
+
+let bestStreak = 0;
+
+let answered = false;
+
+let mistakes = {};
+
+
+/* =========================================================
+   BANCO DE PREGUNTAS
+========================================================= */
+
+const QUESTION_TEMPLATES = [
+
+{
+category: "Señales de tránsito",
+difficulty: "Facil",
+
+question:
+"Encuentras una señal de ALTO en una intersección. ¿Qué debes hacer?",
+
+answers: [
+
+"Reducir ligeramente la velocidad y continuar.",
+
+"Detener completamente el vehículo y comprobar que sea seguro continuar.",
+
+"Tocar la bocina y pasar.",
+
+"Acelerar para despejar la intersección."
+
+],
+
+correct: 1,
+
+feedback:
+"Una señal de ALTO requiere detener completamente el vehículo antes de continuar."
+},
+
+
+{
+category: "Señales de tránsito",
+difficulty: "Facil",
+
+question:
+"Una señal advierte de una curva peligrosa. ¿Cuál es la conducta más segura?",
+
+answers: [
+
+"Acelerar antes de llegar.",
+
+"Reducir la velocidad antes de entrar en la curva.",
+
+"Frenar bruscamente dentro de la curva.",
+
+"Ignorar la señal si no hay tráfico."
+
+],
+
+correct: 1,
+
+feedback:
+"Las señales de advertencia permiten anticipar peligros y adaptar la velocidad."
+},
+
+
+{
+category: "Señales de tránsito",
+difficulty: "Intermedio",
+
+question:
+"Una señal indica una prohibición de adelantar. El vehículo delante circula lentamente. ¿Qué debes hacer?",
+
+answers: [
+
+"Adelantar inmediatamente.",
+
+"Adelantar por el arcén.",
+
+"Esperar hasta una zona donde el adelantamiento sea permitido y seguro.",
+
+"Utilizar el carril contrario sin comprobar."
+
+],
+
+correct: 2,
+
+feedback:
+"Las prohibiciones deben respetarse aunque el vehículo de adelante circule lentamente."
+},
+
+
+{
+category: "Límites de velocidad",
+difficulty: "Facil",
+
+question:
+"Una señal establece un límite máximo de 50 km/h. La carretera está vacía. ¿Qué debes hacer?",
+
+answers: [
+
+"Circular a 70 km/h.",
+
+"No superar los 50 km/h.",
+
+"Circular a cualquier velocidad.",
+
+"Superar el límite si tienes experiencia."
+
+],
+
+correct: 1,
+
+feedback:
+"El límite máximo debe respetarse aunque la carretera esté despejada."
+},
+
+
+{
+category: "Límites de velocidad",
+difficulty: "Intermedio",
+
+question:
+"El límite máximo es 80 km/h, pero hay lluvia intensa. ¿Qué debes hacer?",
+
+answers: [
+
+"Conducir obligatoriamente a 80 km/h.",
+
+"Superar los 80 km/h.",
+
+"Reducir la velocidad según las condiciones.",
+
+"Mantener la velocidad porque el límite lo permite."
+
+],
+
+correct: 2,
+
+feedback:
+"El límite máximo no significa que siempre sea seguro conducir a esa velocidad."
+},
+
+
+{
+category: "Distancias de seguridad",
+difficulty: "Facil",
+
+question:
+"¿Por qué debes mantener una distancia adecuada con el vehículo que circula delante?",
+
+answers: [
+
+"Para tener tiempo de reaccionar ante una frenada.",
+
+"Para impedir que otros vehículos adelanten.",
+
+"Para conducir más rápido.",
+
+"Para no utilizar los espejos."
+
+],
+
+correct: 0,
+
+feedback:
+"Una distancia adecuada proporciona tiempo y espacio para reaccionar."
+},
+
+
+{
+category: "Distancias de seguridad",
+difficulty: "Intermedio",
+
+question:
+"La carretera está mojada. ¿Qué cambio es recomendable respecto a la distancia de seguimiento?",
+
+answers: [
+
+"Reducirla.",
+
+"Mantenerla exactamente igual.",
+
+"Aumentarla.",
+
+"Eliminarla."
+
+],
+
+correct: 2,
+
+feedback:
+"Con lluvia y menor adherencia conviene aumentar la distancia de seguridad."
+},
+
+
+{
+category: "Condiciones climáticas",
+difficulty: "Facil",
+
+question:
+"Comienza una lluvia intensa. ¿Cuál es la conducta más segura?",
+
+answers: [
+
+"Aumentar la velocidad.",
+
+"Reducir la velocidad y aumentar la distancia.",
+
+"Apagar las luces.",
+
+"Conducir más cerca del vehículo delantero."
+
+],
+
+correct: 1,
+
+feedback:
+"La lluvia puede reducir la visibilidad y aumentar la distancia necesaria para detenerse."
+},
+
+
+{
+category: "Condiciones climáticas",
+difficulty: "Intermedio",
+
+question:
+"La carretera está mojada y hay poca visibilidad. ¿Qué debes evitar?",
+
+answers: [
+
+"Reducir la velocidad.",
+
+"Aumentar la distancia.",
+
+"Realizar maniobras bruscas.",
+
+"Utilizar las luces apropiadas."
+
+],
+
+correct: 2,
+
+feedback:
+"Las maniobras bruscas pueden provocar pérdida de control en superficies mojadas."
+},
+
+
+{
+category: "Conducción nocturna",
+difficulty: "Facil",
+
+question:
+"Un vehículo se aproxima de frente durante la noche. Llevas luces altas. ¿Qué debes hacer?",
+
+answers: [
+
+"Mantenerlas.",
+
+"Apagar todas las luces.",
+
+"Cambiar a luces bajas.",
+
+"Encender las luces de emergencia."
+
+],
+
+correct: 2,
+
+feedback:
+"Las luces altas pueden deslumbrar a otros conductores."
+},
+
+
+{
+category: "Cinturón de seguridad",
+difficulty: "Facil",
+
+question:
+"Un pasajero dice que no necesita cinturón porque el viaje será corto. ¿Qué debes hacer?",
+
+answers: [
+
+"Permitirlo.",
+
+"Indicarle que debe utilizarlo.",
+
+"Utilizarlo solamente en carretera.",
+
+"Ponérselo después."
+
+],
+
+correct: 1,
+
+feedback:
+"Los accidentes pueden ocurrir incluso durante trayectos cortos."
+},
+
+
+{
+category: "Distracciones al volante",
+difficulty: "Facil",
+
+question:
+"Recibes una notificación en el teléfono mientras conduces. ¿Qué haces?",
+
+answers: [
+
+"Leerla inmediatamente.",
+
+"Responderla rápidamente.",
+
+"Esperar hasta estar detenido en un lugar seguro.",
+
+"Mirarla cuando el tráfico esté lento."
+
+],
+
+correct: 2,
+
+feedback:
+"Manipular el teléfono desvía la atención de la conducción."
+},
+
+
+{
+category: "Distracciones al volante",
+difficulty: "Intermedio",
+
+question:
+"Se cae un objeto al suelo del vehículo mientras conduces. ¿Qué debes hacer?",
+
+answers: [
+
+"Agacharte para recogerlo.",
+
+"Buscarlo mientras conduces.",
+
+"Esperar hasta detenerte en un lugar seguro.",
+
+"Frenar bruscamente."
+
+],
+
+correct: 2,
+
+feedback:
+"Buscar objetos desvía la vista y la atención de la carretera."
+},
+
+
+{
+category: "Fatiga",
+difficulty: "Facil",
+
+question:
+"Sientes sueño mientras conduces. ¿Qué debes hacer?",
+
+answers: [
+
+"Abrir la ventana y continuar.",
+
+"Aumentar la música.",
+
+"Detenerte en un lugar seguro y descansar.",
+
+"Acelerar para llegar antes."
+
+],
+
+correct: 2,
+
+feedback:
+"La somnolencia reduce la capacidad de reacción. Lo más seguro es detenerse y descansar."
+},
+
+
+{
+category: "Alcohol y sustancias",
+difficulty: "Facil",
+
+question:
+"Has consumido alcohol y necesitas regresar a casa. ¿Cuál es la opción más segura?",
+
+answers: [
+
+"Conducir lentamente.",
+
+"Conducir si te sientes bien.",
+
+"Utilizar un conductor sobrio o un medio de transporte alternativo.",
+
+"Tomar café y conducir."
+
+],
+
+correct: 2,
+
+feedback:
+"El alcohol puede afectar la conducción incluso cuando la persona cree sentirse capaz."
+},
+
+
+{
+category: "Peatones",
+difficulty: "Facil",
+
+question:
+"Un peatón está cruzando por un paso peatonal. ¿Qué debes hacer?",
+
+answers: [
+
+"Acelerar.",
+
+"Ceder el paso cuando corresponda.",
+
+"Tocar la bocina.",
+
+"Pasar por detrás rápidamente."
+
+],
+
+correct: 1,
+
+feedback:
+"Debes respetar los cruces peatonales y dar prioridad cuando corresponda."
+},
+
+
+{
+category: "Ciclistas",
+difficulty: "Intermedio",
+
+question:
+"Circulas detrás de un ciclista. ¿Qué debes hacer?",
+
+answers: [
+
+"Pasar muy cerca.",
+
+"Mantener distancia y adelantar solamente cuando sea seguro.",
+
+"Tocar la bocina continuamente.",
+
+"Conducir por el arcén."
+
+],
+
+correct: 1,
+
+feedback:
+"Los ciclistas son usuarios vulnerables y necesitan espacio suficiente."
+},
+
+
+{
+category: "Zonas escolares",
+difficulty: "Facil",
+
+question:
+"Te aproximas a una escuela durante la entrada de estudiantes. ¿Qué debes hacer?",
+
+answers: [
+
+"Reducir la velocidad y aumentar la atención.",
+
+"Acelerar.",
+
+"Tocar la bocina.",
+
+"Ignorar la zona."
+
+],
+
+correct: 0,
+
+feedback:
+"Las zonas escolares requieren especial precaución debido a la presencia de niños."
+},
+
+
+{
+category: "Motociclistas",
+difficulty: "Intermedio",
+
+question:
+"Una motocicleta circula cerca de tu vehículo. ¿Qué debes recordar?",
+
+answers: [
+
+"Que ocupa mucho menos espacio y no necesita distancia.",
+
+"Que es un usuario vulnerable y debes mantener una separación segura.",
+
+"Que puedes cerrarle el paso.",
+
+"Que puedes adelantarla sin mirar."
+
+],
+
+correct: 1,
+
+feedback:
+"Las motocicletas son más vulnerables y pueden ser menos visibles que otros vehículos."
+},
+
+
+{
+category: "Mantenimiento del vehículo",
+difficulty: "Facil",
+
+question:
+"Antes de un viaje largo, ¿qué es recomendable comprobar?",
+
+answers: [
+
+"Solo la radio.",
+
+"Neumáticos, luces, niveles y elementos básicos de seguridad.",
+
+"Solamente el color del vehículo.",
+
+"Nada si el automóvil funciona."
+
+],
+
+correct: 1,
+
+feedback:
+"Una revisión básica ayuda a detectar problemas que podrían convertirse en riesgos."
+},
+
+
+{
+category: "Conducción responsable",
+difficulty: "Intermedio",
+
+question:
+"Otro conductor realiza una maniobra peligrosa frente a ti. ¿Qué debes hacer?",
+
+answers: [
+
+"Perseguirlo.",
+
+"Responder agresivamente.",
+
+"Mantener la calma y aumentar la distancia.",
+
+"Bloquearle el paso."
+
+],
+
+correct: 2,
+
+feedback:
+"Evitar la conducción agresiva reduce el riesgo de conflictos y accidentes."
+},
+
+
+{
+category: "Emergencias",
+difficulty: "Intermedio",
+
+question:
+"Tu vehículo queda averiado en una zona de circulación peligrosa. ¿Qué debes hacer?",
+
+answers: [
+
+"Quedarte dentro del carril.",
+
+"Activar las señales de advertencia y buscar una posición segura si es posible.",
+
+"Salir inmediatamente hacia la carretera.",
+
+"Intentar reparar el vehículo sin comprobar el tráfico."
+
+],
+
+correct: 1,
+
+feedback:
+"Debes reducir el riesgo de una segunda colisión y solicitar asistencia cuando sea necesario."
+},
+
+
+{
+category: "Accidentes",
+difficulty: "Difícil",
+
+question:
+"Llegas primero a un accidente. ¿Qué debes hacer antes de acercarte?",
+
+answers: [
+
+"Entrar rápidamente en la zona.",
+
+"Comprobar que sea seguro acercarte y evitar exponerte a otros peligros.",
+
+"Tomar fotografías.",
+
+"Detenerte en medio de la carretera."
+
+],
+
+correct: 1,
+
+feedback:
+"Tu seguridad es prioritaria. Primero evalúa los peligros presentes en la escena."
+},
+
+
+{
+category: "Accidentes",
+difficulty: "Difícil",
+
+question:
+"Existe riesgo de nuevas colisiones después de un accidente. ¿Qué prioridad debes considerar?",
+
+answers: [
+
+"Tomar fotografías.",
+
+"Proteger la zona y alertar a otros usuarios cuando sea seguro hacerlo.",
+
+"Discutir con los conductores.",
+
+"Abandonar el lugar sin advertir a nadie."
+
+],
+
+correct: 1,
+
+feedback:
+"Evitar un segundo accidente es una prioridad importante."
+},
+
+
+{
+category: "Conducción nocturna",
+difficulty: "Difícil",
+
+question:
+"La visibilidad nocturna es insuficiente para detenerte dentro de la zona que puedes observar. ¿Qué debes hacer?",
+
+answers: [
+
+"Acelerar.",
+
+"Reducir la velocidad.",
+
+"Apagar las luces.",
+
+"Conducir por el centro de la vía."
+
+],
+
+correct: 1,
+
+feedback:
+"Debes conducir a una velocidad que permita reaccionar ante los peligros visibles."
+},
+
+
+{
+category: "Peatones",
+difficulty: "Difícil",
+
+question:
+"Un peatón parece distraído y está cerca de la carretera. ¿Cómo debes reaccionar?",
+
+answers: [
+
+"Acelerar.",
+
+"Reducir la velocidad y estar preparado para detenerte.",
+
+"Conducir más cerca.",
+
+"Continuar a la misma velocidad sin modificar la trayectoria."
+
+],
+
+correct: 1,
+
+feedback:
+"Los peatones pueden entrar inesperadamente a la vía. Debes anticiparte y reducir el riesgo."
+},
+
+
+{
+category: "Ciclistas",
+difficulty: "Difícil",
+
+question:
+"Un ciclista se desplaza lateralmente y no puedes determinar su trayectoria. ¿Qué debes hacer?",
+
+answers: [
+
+"Adelantar inmediatamente.",
+
+"Reducir la velocidad y esperar.",
+
+"Pasar por cualquier espacio disponible.",
+
+"Acelerar para adelantarlo antes de que cambie de posición."
+
+],
+
+correct: 1,
+
+feedback:
+"Cuando no puedes predecir la trayectoria de un ciclista, debes aumentar el margen de seguridad."
+},
+
+
+{
+category: "Mantenimiento del vehículo",
+difficulty: "Difícil",
+
+question:
+"Notas que un neumático parece tener una presión incorrecta. ¿Qué debes hacer?",
+
+answers: [
+
+"Ignorarlo.",
+
+"Comprobar y corregir la presión según las especificaciones del vehículo.",
+
+"Aumentar la velocidad para comprobarlo.",
+
+"Desinflarlo completamente."
+
+],
+
+correct: 1,
+
+feedback:
+"La presión correcta ayuda a mantener el comportamiento y seguridad adecuados del vehículo."
+}
+
+];
+
+
+/* =========================================================
+   BANCO PESADILLA
+=========================================================
+
+   Estas preguntas presentan escenarios más realistas.
+   Las respuestas están diseñadas para ser deliberadamente
+   similares y exigir análisis.
+
+========================================================= */
+
+const NIGHTMARE_QUESTIONS = [
+
+{
+category: "Accidente de tránsito",
+difficulty: "Pesadilla",
+
+question:
+"Participas en un accidente menor. No observas personas heridas y los vehículos pueden moverse. ¿Cuál es la acción más adecuada como primera medida?",
+
+answers: [
+
+"Contactar primero a la aseguradora y seguir sus instrucciones.",
+
+"Contactar primero a la policía aunque no exista ninguna otra circunstancia que requiera su intervención.",
+
+"Llamar primero al servicio de emergencias aunque no haya personas heridas ni peligro inmediato.",
+
+"Abandonar el lugar después de intercambiar verbalmente los datos."
+],
+
+correct: 0,
+
+feedback:
+"En un accidente menor sin personas heridas, normalmente resulta importante documentar la situación y contactar a la aseguradora conforme al procedimiento aplicable. Los requisitos legales pueden variar según la jurisdicción."
+},
+
+
+{
+category: "Accidente de tránsito",
+difficulty: "Pesadilla",
+
+question:
+"Después de una colisión aparentemente leve, una persona comienza a quejarse de dolor en el cuello. ¿Qué opción es más prudente?",
+
+answers: [
+
+"Continuar el procedimiento del accidente porque la colisión fue leve.",
+
+"Solicitar valoración de los servicios de emergencia debido a la posible lesión.",
+
+"Trasladar a la persona por cuenta propia inmediatamente.",
+
+"Esperar a que desaparezca el dolor antes de solicitar asistencia."
+],
+
+correct: 1,
+
+feedback:
+"El dolor después de una colisión puede indicar una lesión que no es evidente inicialmente."
+},
+
+
+{
+category: "Accidente de tránsito",
+difficulty: "Pesadilla",
+
+question:
+"Tu vehículo sufrió una colisión menor y quedó detenido en un lugar donde existe riesgo de ser impactado nuevamente. ¿Qué debes priorizar?",
+
+answers: [
+
+"Tomar fotografías antes de realizar cualquier otra acción.",
+
+"Proteger la zona y reducir el riesgo de una segunda colisión, siempre que hacerlo sea seguro.",
+
+"Discutir con el otro conductor antes de mover el vehículo.",
+
+"Esperar dentro del vehículo sin activar ninguna señal."
+],
+
+correct: 1,
+
+feedback:
+"La prevención de una segunda colisión debe tener prioridad cuando existe un peligro inmediato."
+},
+
+
+{
+category: "Accidente de tránsito",
+difficulty: "Pesadilla",
+
+question:
+"En un accidente sin heridos aparentes, el otro conductor propone resolver todo sin intercambiar información. ¿Cuál es la respuesta más prudente?",
+
+answers: [
+
+"Aceptar porque el accidente fue menor.",
+
+"Intercambiar la información necesaria y seguir el procedimiento correspondiente.",
+
+"Aceptar si el otro conductor ofrece pagar en efectivo.",
+
+"Retirarte si el vehículo todavía puede circular."
+],
+
+correct: 1,
+
+feedback:
+"Un accidente debe documentarse adecuadamente y seguir los procedimientos aplicables, incluso cuando aparentemente sea menor."
+},
+
+
+{
+category: "Accidente de tránsito",
+difficulty: "Pesadilla",
+
+question:
+"Observas un accidente y existe una persona aparentemente inconsciente. ¿Qué opción tiene mayor prioridad?",
+
+answers: [
+
+"Contactar a un familiar antes de solicitar asistencia.",
+
+"Solicitar inmediatamente los servicios de emergencia.",
+
+"Esperar unos minutos para comprobar si despierta.",
+
+"Buscar primero la información del seguro."
+],
+
+correct: 1,
+
+feedback:
+"Una persona inconsciente puede encontrarse en una situación médica urgente."
+},
+
+
+{
+category: "Emergencias",
+difficulty: "Pesadilla",
+
+question:
+"Debes informar de un accidente con posibles personas heridas. ¿Qué información es especialmente útil para los servicios de emergencia?",
+
+answers: [
+
+"Solamente tu nombre y el modelo del vehículo.",
+
+"La ubicación, la naturaleza del accidente y el número aproximado de personas afectadas.",
+
+"Únicamente quién consideras responsable.",
+
+"Solo el número de matrícula del otro vehículo."
+],
+
+correct: 1,
+
+feedback:
+"La ubicación y la naturaleza de la emergencia permiten que los servicios de respuesta determinen mejor la asistencia necesaria."
+},
+
+
+{
+category: "Conducción defensiva",
+difficulty: "Pesadilla",
+
+question:
+"Circulas por una carretera y observas un vehículo detenido parcialmente en el arcén con las luces de emergencia activadas. ¿Qué conducta ofrece mayor margen de seguridad?",
+
+answers: [
+
+"Mantener la velocidad porque el vehículo está fuera del carril.",
+
+"Reducir la velocidad y aumentar la atención ante una posible incorporación de personas o vehículos.",
+
+"Acelerar para pasar rápidamente junto al vehículo.",
+
+"Conducir lo más cerca posible del vehículo detenido."
+],
+
+correct: 1,
+
+feedback:
+"Un vehículo detenido puede indicar una situación de emergencia y puede haber personas cerca de la vía."
+},
+
+
+{
+category: "Conducción defensiva",
+difficulty: "Pesadilla",
+
+question:
+"Un vehículo detrás de ti circula demasiado cerca. ¿Cuál es la respuesta más segura?",
+
+answers: [
+
+"Frenar bruscamente para obligarlo a aumentar la distancia.",
+
+"Aumentar gradualmente el espacio con el vehículo que tienes delante y facilitar un adelantamiento seguro cuando corresponda.",
+
+"Aumentar considerablemente tu velocidad.",
+
+"Bloquear deliberadamente el paso."
+],
+
+correct: 1,
+
+feedback:
+"Evita respuestas agresivas. Aumentar el margen delantero puede darte más espacio para reaccionar."
+},
+
+
+{
+category: "Distracciones",
+difficulty: "Pesadilla",
+
+question:
+"Recibes una llamada importante mientras conduces. El tráfico está detenido temporalmente. ¿Qué opción es más segura?",
+
+answers: [
+
+"Responder porque el vehículo no se está moviendo.",
+
+"Esperar hasta estar detenido en una ubicación donde sea seguro utilizar el teléfono.",
+
+"Responder brevemente mientras mantienes el freno.",
+
+"Responder utilizando solamente una mano."
+],
+
+correct: 1,
+
+feedback:
+"Una detención temporal dentro del tráfico no necesariamente convierte el uso del teléfono en una acción segura o permitida."
+},
+
+
+{
+category: "Distracciones",
+difficulty: "Pesadilla",
+
+question:
+"Tu sistema de navegación indica que debes tomar una salida, pero no tienes tiempo suficiente para cambiar de carril con seguridad. ¿Qué debes hacer?",
+
+answers: [
+
+"Cambiar de carril rápidamente para no perder la salida.",
+
+"Continuar por el carril actual y realizar la siguiente maniobra cuando sea segura.",
+
+"Frenar dentro del carril para esperar un espacio.",
+
+"Utilizar el arcén para llegar a la salida."
+],
+
+correct: 1,
+
+feedback:
+"Perder una salida es preferible a realizar una maniobra insegura."
+},
+
+
+{
+category: "Clima",
+difficulty: "Pesadilla",
+
+question:
+"Durante una lluvia intensa observas que el vehículo delante levanta una gran cantidad de agua. ¿Qué conducta es más adecuada?",
+
+answers: [
+
+"Acercarte para aprovechar su trayectoria.",
+
+"Aumentar la distancia y reducir la velocidad según las condiciones.",
+
+"Aumentar la velocidad para salir de la zona rápidamente.",
+
+"Mantener exactamente la misma velocidad y distancia."
+],
+
+correct: 1,
+
+feedback:
+"El agua puede reducir considerablemente la visibilidad y la adherencia."
+},
+
+
+{
+category: "Clima",
+difficulty: "Pesadilla",
+
+question:
+"Durante una lluvia intensa el vehículo comienza a perder adherencia sobre una capa de agua. ¿Qué debes evitar?",
+
+answers: [
+
+"Realizar movimientos bruscos de dirección.",
+
+"Reducir gradualmente la velocidad cuando sea posible.",
+
+"Mantener una trayectoria estable.",
+
+"Evitar maniobras repentinas."
+],
+
+correct: 0,
+
+feedback:
+"Los movimientos bruscos pueden agravar la pérdida de control."
+},
+
+
+{
+category: "Fatiga",
+difficulty: "Pesadilla",
+
+question:
+"Llevas varias horas conduciendo y notas que has comenzado a perder concentración. El destino está relativamente cerca. ¿Qué opción es más segura?",
+
+answers: [
+
+"Continuar porque falta poco.",
+
+"Detenerte en un lugar seguro para descansar antes de continuar.",
+
+"Aumentar la música y continuar.",
+
+"Aumentar la velocidad para llegar antes."
+],
+
+correct: 1,
+
+feedback:
+"La cercanía del destino no elimina el riesgo asociado a la fatiga."
+},
+
+
+{
+category: "Alcohol y sustancias",
+difficulty: "Pesadilla",
+
+question:
+"Consumiste alcohol varias horas atrás y actualmente te sientes completamente normal. ¿Qué criterio es más seguro?",
+
+answers: [
+
+"Conducir porque ya no percibes los efectos.",
+
+"No conducir si existe posibilidad de que el alcohol siga afectando tus capacidades.",
+
+"Conducir lentamente para compensar.",
+
+"Tomar café antes de conducir."
+],
+
+correct: 1,
+
+feedback:
+"La percepción subjetiva de estar bien no garantiza que las capacidades necesarias para conducir no estén afectadas."
+},
+
+
+{
+category: "Peatones",
+difficulty: "Pesadilla",
+
+question:
+"Te aproximas a un paso peatonal y un vehículo estacionado bloquea parcialmente tu visión. ¿Qué debes hacer?",
+
+answers: [
+
+"Mantener la velocidad porque todavía no ves peatones.",
+
+"Reducir la velocidad y estar preparado para detenerte ante un peatón oculto.",
+
+"Acelerar para pasar antes de que aparezca alguien.",
+
+"Tocar la bocina y continuar a la misma velocidad."
+],
+
+correct: 1,
+
+feedback:
+"La falta de visibilidad aumenta la necesidad de anticipación."
+},
+
+
+{
+category: "Motociclistas",
+difficulty: "Pesadilla",
+
+question:
+"Una motocicleta circula junto a tu vehículo y se encuentra en una zona donde puede quedar fuera de tus espejos durante unos segundos. ¿Qué debes hacer antes de cambiar de carril?",
+
+answers: [
+
+"Cambiar de carril porque ya revisaste el espejo central.",
+
+"Comprobar nuevamente los espejos y el entorno antes de realizar la maniobra.",
+
+"Activar la señal y cambiar inmediatamente.",
+
+"Acelerar para dejar atrás la motocicleta."
+],
+
+correct: 1,
+
+feedback:
+"Las motocicletas pueden permanecer en zonas de baja visibilidad durante una maniobra de cambio de carril."
+},
+
+
+{
+category: "Mantenimiento",
+difficulty: "Pesadilla",
+
+question:
+"Antes de un viaje largo notas que uno de los neumáticos pierde presión lentamente. ¿Qué decisión es más prudente?",
+
+answers: [
+
+"Inflarlo y viajar sin revisar la causa.",
+
+"Comprobar el neumático y solucionar el problema antes del viaje.",
+
+"Aumentar ligeramente la presión y continuar.",
+
+"Reducir la presión de los otros neumáticos para equilibrarlos."
+],
+
+correct: 1,
+
+feedback:
+"Una pérdida de presión puede indicar un problema que debe revisarse antes de realizar un trayecto largo."
+},
+
+
+{
+category: "Mantenimiento",
+difficulty: "Pesadilla",
+
+question:
+"Una luz de advertencia relacionada con un sistema importante del vehículo aparece durante la conducción. ¿Qué debes hacer?",
+
+answers: [
+
+"Ignorarla si el vehículo todavía funciona.",
+
+"Consultar el significado de la advertencia y actuar según su gravedad.",
+
+"Apagar el tablero para que no distraiga.",
+
+"Aumentar la velocidad para terminar el recorrido."
+],
+
+correct: 1,
+
+feedback:
+"Las luces de advertencia pueden indicar condiciones que requieren atención inmediata o revisión."
+},
+
+
+{
+category: "Señalización",
+difficulty: "Pesadilla",
+
+question:
+"Te aproximas a una intersección y el semáforo cambia cuando estás demasiado cerca para detenerte de forma segura. ¿Qué debes hacer?",
+
+answers: [
+
+"Frenar de manera extremadamente brusca sin considerar el tráfico posterior.",
+
+"Tomar la decisión que permita detenerte o continuar de forma segura según la situación y las normas aplicables.",
+
+"Acelerar siempre para cruzar.",
+
+"Detenerte en cualquier lugar de la intersección."
+],
+
+correct: 1,
+
+feedback:
+"Las decisiones ante un cambio de señal deben considerar seguridad, distancia disponible y condiciones del tráfico."
+},
+
+
+{
+category: "Conducción defensiva",
+difficulty: "Pesadilla",
+
+question:
+"Un vehículo invade parcialmente tu carril de forma inesperada. ¿Cuál es tu primera prioridad?",
+
+answers: [
+
+"Evitar la colisión manteniendo el mayor control posible del vehículo.",
+
+"Tocar la bocina continuamente antes de realizar cualquier acción.",
+
+"Acelerar para pasar delante del vehículo.",
+
+"Perseguir al conductor después de evitarlo."
+],
+
+correct: 0,
+
+feedback:
+"La prioridad inmediata es evitar una colisión y mantener el control del vehículo."
+},
+
+
+{
+category: "Accidentes",
+difficulty: "Pesadilla",
+
+question:
+"Después de una colisión, el otro conductor está alterado y comienza una discusión. ¿Qué debes hacer?",
+
+answers: [
+
+"Responder con la misma intensidad.",
+
+"Mantener la calma y priorizar la seguridad de las personas y del lugar.",
+
+"Bloquear físicamente al otro conductor.",
+
+"Abandonar el vehículo sin evaluar el entorno."
+],
+
+correct: 1,
+
+feedback:
+"La confrontación puede aumentar el riesgo. Mantener la calma ayuda a gestionar la situación de manera segura."
+},
+
+
+{
+category: "Accidentes",
+difficulty: "Pesadilla",
+
+question:
+"Después de un accidente menor, el otro conductor solicita que no se llame a nadie porque propone pagar inmediatamente. ¿Qué opción es más prudente?",
+
+answers: [
+
+"Aceptar inmediatamente porque parece una solución sencilla.",
+
+"Seguir el procedimiento correspondiente y documentar adecuadamente el accidente.",
+
+"Aceptar únicamente si el conductor promete pagar después.",
+
+"Retirarte sin registrar información."
+],
+
+correct: 1,
+
+feedback:
+"Una solución informal puede generar problemas posteriores. Es preferible seguir el procedimiento aplicable y conservar información del incidente."
+},
+
+
+{
+category: "Emergencias",
+difficulty: "Pesadilla",
+
+question:
+"Presencias una colisión y no sabes si existen personas heridas. ¿Cuál es la respuesta más adecuada?",
+
+answers: [
+
+"Continuar porque no observaste sangre.",
+
+"Evaluar la seguridad de la escena y solicitar asistencia si existe posibilidad de lesiones.",
+
+"Acercarte inmediatamente sin evaluar el tráfico.",
+
+"Tomar fotografías antes de comprobar si alguien necesita ayuda."
+],
+
+correct: 1,
+
+feedback:
+"La ausencia de lesiones visibles no significa necesariamente que nadie esté herido."
+},
+
+
+{
+category: "Conducción defensiva",
+difficulty: "Pesadilla",
+
+question:
+"Vas a realizar un cambio de carril y un vehículo se encuentra en una zona que no puedes observar completamente. ¿Qué debes hacer?",
+
+answers: [
+
+"Cambiar porque ya activaste la señal.",
+
+"Esperar hasta disponer de una oportunidad segura y confirmar que el carril esté libre.",
+
+"Cambiar lentamente esperando que el otro vehículo se aparte.",
+
+"Acelerar para ocupar primero el espacio."
+],
+
+correct: 1,
+
+feedback:
+"La señalización comunica una intención, pero no sustituye la comprobación de que la maniobra sea segura."
+},
+
+
+{
+category: "Zonas escolares",
+difficulty: "Pesadilla",
+
+question:
+"Circulas cerca de una escuela y observas una pelota salir hacia la carretera. ¿Qué debes anticipar?",
+
+answers: [
+
+"Que solamente aparecerá la pelota.",
+
+"Que un niño podría correr detrás de ella.",
+
+"Que los peatones siempre permanecerán en la acera.",
+
+"Que puedes mantener la velocidad si no ves a nadie."
+],
+
+correct: 1,
+
+feedback:
+"Los niños pueden reaccionar de forma imprevisible y aparecer rápidamente detrás de un objeto."
+},
+
+
+{
+category: "Ciclistas",
+difficulty: "Pesadilla",
+
+question:
+"Quieres adelantar a un ciclista, pero existe poco espacio lateral y viene tráfico en sentido contrario. ¿Qué debes hacer?",
+
+answers: [
+
+"Adelantar rápidamente antes de que llegue el tráfico.",
+
+"Esperar hasta disponer de espacio suficiente para realizar el adelantamiento de forma segura.",
+
+"Pasar muy cerca del ciclista.",
+
+"Usar el arcén para ampliar el espacio."
+],
+
+correct: 1,
+
+feedback:
+"Si no existe espacio suficiente para una maniobra segura, debes esperar."
+},
+
+
+{
+category: "Conducción nocturna",
+difficulty: "Pesadilla",
+
+question:
+"Conduces de noche y un vehículo que viene de frente parece deslumbrarte. ¿Qué conducta ayuda a mantener el control?",
+
+answers: [
+
+"Mirar directamente hacia las luces del vehículo.",
+
+"Reducir la velocidad y orientar la atención hacia una referencia segura de la vía sin perder el control.",
+
+"Acelerar para abandonar rápidamente la zona.",
+
+"Encender las luces altas para responder."
+],
+
+correct: 1,
+
+feedback:
+"El deslumbramiento puede reducir temporalmente la capacidad visual, por lo que conviene reducir el riesgo y mantener el control."
+},
+
+
+{
+category: "Seguridad vial",
+difficulty: "Pesadilla",
+
+question:
+"Un pasajero te pide que conduzcas más rápido porque llega tarde. ¿Qué criterio debe prevalecer?",
+
+answers: [
+
+"Cumplir la petición si conoces bien la carretera.",
+
+"Conducir a una velocidad segura y dentro de los límites aplicables.",
+
+"Aumentar la velocidad solamente en tramos rectos.",
+
+"Superar ligeramente el límite si no hay tráfico."
+],
+
+correct: 1,
+
+feedback:
+"La presión de los pasajeros no debe modificar una conducción segura y responsable."
+},
+
+
+{
+category: "Seguridad vial",
+difficulty: "Pesadilla",
+
+question:
+"Un vehículo intenta adelantarte en una zona donde tú también pretendías adelantar. ¿Qué debes hacer?",
+
+answers: [
+
+"Aumentar la velocidad para impedirle el paso.",
+
+"Evitar competir y mantener una conducta que permita completar las maniobras de forma segura.",
+
+"Acercarte al vehículo que tienes delante.",
+
+"Bloquear el carril."
+],
+
+correct: 1,
+
+feedback:
+"La conducción defensiva evita competir con otros usuarios y prioriza mantener márgenes de seguridad."
+},
+
+
+{
+category: "Seguridad vial",
+difficulty: "Pesadilla",
+
+question:
+"Observas que un conductor parece estar utilizando el teléfono mientras circula de forma irregular. ¿Qué debes hacer?",
+
+answers: [
+
+"Acercarte para advertirle personalmente.",
+
+"Mantener distancia y evitar involucrarte directamente mientras conduces.",
+
+"Adelantarlo inmediatamente por cualquier espacio.",
+
+"Seguirlo para comprobar su comportamiento."
+],
+
+correct: 1,
+
+feedback:
+"La prioridad es mantener tu propia seguridad y evitar una interacción que pueda generar otro riesgo."
+},
+
+
+{
+category: "Emergencias",
+difficulty: "Pesadilla",
+
+question:
+"Tu vehículo queda detenido en una vía con tráfico rápido y no puedes moverlo inmediatamente. ¿Qué debes priorizar?",
+
+answers: [
+
+"Intentar repararlo inmediatamente sin evaluar el tráfico.",
+
+"Hacer visible la situación y reducir el riesgo de una colisión secundaria.",
+
+"Quedarte inmóvil sin activar ninguna señal.",
+
+"Caminar por la vía para pedir ayuda."
+],
+
+correct: 1,
+
+feedback:
+"Cuando un vehículo queda detenido en una vía peligrosa, es fundamental reducir el riesgo de una segunda colisión."
+},
+
+
+{
+category: "Conducción defensiva",
+difficulty: "Pesadilla",
+
+question:
+"Un vehículo se incorpora delante de ti dejando una distancia muy pequeña. ¿Qué respuesta es más segura?",
+
+answers: [
+
+"Acelerar para recuperar inmediatamente la distancia.",
+
+"Reducir la velocidad según sea necesario para recuperar una distancia segura.",
+
+"Frenar bruscamente para demostrar que fue una maniobra incorrecta.",
+
+"Tocar la bocina y mantener la misma velocidad."
+],
+
+correct: 1,
+
+feedback:
+"Recuperar una distancia segura reduce el riesgo de una colisión por alcance."
+},
+
+
+{
+category: "Accidentes",
+difficulty: "Pesadilla",
+
+question:
+"Después de una colisión, una persona quiere abandonar el lugar caminando aunque parece desorientada. ¿Qué debes considerar?",
+
+answers: [
+
+"Dejarla marcharse porque el accidente fue menor.",
+
+"Solicitar valoración profesional si existe preocupación por su estado.",
+
+"Obligarla a caminar hasta un lugar lejano.",
+
+"Entregarle comida y esperar."
+],
+
+correct: 1,
+
+feedback:
+"La desorientación después de una colisión puede ser una señal de que se necesita valoración médica."
+}
+
+];
+
+
+/* =========================================================
+   GENERACIÓN DEL BANCO NORMAL
+========================================================= */
+
+function generateQuestionBank() {
+
+    const bank = [];
+
+    QUESTION_TEMPLATES.forEach(
+        (question, index) => {
+
+            bank.push({
+                ...question,
+                id: index + 1
+            });
+
+        }
+    );
+
+    return bank;
+}
+
+
+const QUESTION_BANK =
+    generateQuestionBank();
+
+
+/* =========================================================
+   ELEMENTOS DEL DOM
+========================================================= */
+
+const homeScreen =
+    document.getElementById("homeScreen");
+
+const gameScreen =
+    document.getElementById("gameScreen");
+
+const resultScreen =
+    document.getElementById("resultScreen");
+
+const questionText =
+    document.getElementById("questionText");
+
+const answersContainer =
+    document.getElementById("answers");
+
+const categoryElement =
+    document.getElementById("category");
+
+const difficultyElement =
+    document.getElementById("difficulty");
+
+const feedback =
+    document.getElementById("feedback");
+
+const feedbackTitle =
+    document.getElementById("feedbackTitle");
+
+const feedbackText =
+    document.getElementById("feedbackText");
+
+const nextContainer =
+    document.getElementById("nextContainer");
+
+const nightmareWarning =
+    document.getElementById("nightmareWarning");
+
+
+/* =========================================================
+   SELECCIÓN DE DIFICULTAD
+========================================================= */
+
+document
+.querySelectorAll(".difficulty-btn")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            document
+            .querySelectorAll(".difficulty-btn")
+            .forEach(btn =>
+                btn.classList.remove("selected")
+            );
+
+            button.classList.add("selected");
+
+            selectedDifficulty =
+                button.dataset.difficulty;
+
+            updateQuestionCountOptions();
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   CONFIGURAR CANTIDAD SEGÚN DIFICULTAD
+========================================================= */
+
+function updateQuestionCountOptions() {
+
+    const buttons =
+        document.querySelectorAll(".count-btn");
+
+    if (selectedDifficulty === "Pesadilla") {
+
+        nightmareWarning.classList.add("show");
+
+        buttons.forEach(button => {
+
+            const count =
+                parseInt(button.dataset.count);
+
+            if (count < 30) {
+
+                button.classList.add("disabled");
+
+            } else {
+
+                button.classList.remove("disabled");
+
+            }
+
+        });
+
+
+        if (selectedQuestionCount < 30) {
+
+            selectedQuestionCount = 30;
+
+            buttons.forEach(btn =>
+                btn.classList.remove("selected")
+            );
+
+            document
+            .querySelector(
+                '.count-btn[data-count="30"]'
+            )
+            .classList.add("selected");
+        }
+
+    } else {
+
+        nightmareWarning.classList.remove("show");
+
+        buttons.forEach(button => {
+
+            button.classList.remove("disabled");
+
+        });
+
+        if (selectedQuestionCount < 10) {
+
+            selectedQuestionCount = 10;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   SELECCIÓN DE CANTIDAD
+========================================================= */
+
+document
+.querySelectorAll(".count-btn")
+.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            if (
+                button.classList.contains("disabled")
+            ) {
+                return;
+            }
+
+            document
+            .querySelectorAll(".count-btn")
+            .forEach(btn =>
+                btn.classList.remove("selected")
+            );
+
+            button.classList.add("selected");
+
+            selectedQuestionCount =
+                parseInt(button.dataset.count);
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   MEZCLAR ARRAY
+========================================================= */
+
+function shuffle(array) {
+
+    const result =
+        [...array];
+
+    for (
+        let i = result.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            result[i],
+            result[j]
+        ] =
+        [
+            result[j],
+            result[i]
+        ];
+
+    }
+
+    return result;
+}
+
+
+/* =========================================================
+   PREPARAR RESPUESTAS ALEATORIAS
+=========================================================
+
+   IMPORTANTE:
+
+   Aquí se mezcla el orden de las respuestas.
+
+   También se actualiza el índice de la respuesta
+   correcta después de la mezcla.
+
+========================================================= */
+
+function shuffleAnswers(question) {
+
+    const answersWithState =
+        question.answers.map(
+            (answer, index) => ({
+
+                text: answer,
+
+                isCorrect:
+                    index === question.correct
+
+            })
+        );
+
+
+    const shuffled =
+        shuffle(answersWithState);
+
+
+    return {
+
+        ...question,
+
+        answers:
+            shuffled.map(
+                item => item.text
+            ),
+
+        correct:
+            shuffled.findIndex(
+                item => item.isCorrect
+            )
+
+    };
+
+}
+
+
+/* =========================================================
+   CREAR EVALUACIÓN
+========================================================= */
+
+function createGameQuestions() {
+
+    let sourceBank;
+
+
+    if (selectedDifficulty === "Pesadilla") {
+
+        sourceBank =
+            NIGHTMARE_QUESTIONS;
+
+    } else {
+
+        sourceBank =
+            QUESTION_BANK.filter(
+                question =>
+                    question.difficulty ===
+                    selectedDifficulty
+            );
+
+    }
+
+
+    /*
+        Si existen menos preguntas que las solicitadas,
+        se reutilizan preguntas de forma controlada.
+
+        Esto permite llegar hasta 100 preguntas aunque
+        el banco inicial contenga menos preguntas.
+    */
+
+    let selected = [];
+
+
+    if (
+        sourceBank.length >=
+        selectedQuestionCount
+    ) {
+
+        selected =
+            shuffle(sourceBank)
+            .slice(
+                0,
+                selectedQuestionCount
+            );
+
+    } else {
+
+        let pool =
+            shuffle(sourceBank);
+
+        while (
+            selected.length <
+            selectedQuestionCount
+        ) {
+
+            selected.push(
+                pool[
+                    selected.length %
+                    pool.length
+                ]
+            );
+
+        }
+
+        selected =
+            shuffle(selected);
+
+    }
+
+
+    /*
+        Mezclar las respuestas de cada pregunta.
+    */
+
+    return selected.map(
+        question =>
+            shuffleAnswers(question)
+    );
+
+}
+
+
+/* =========================================================
+   INICIAR JUEGO
+========================================================= */
+
+function startGame() {
+
+    if (
+        selectedDifficulty ===
+        "Pesadilla"
+    ) {
+
+        if (
+            selectedQuestionCount < 30
+        ) {
+
+            selectedQuestionCount = 30;
+
+        }
+
+    }
+
+
+    if (
+        selectedQuestionCount >
+        MAX_QUESTIONS
+    ) {
+
+        selectedQuestionCount =
+            MAX_QUESTIONS;
+
+    }
+
+
+    gameQuestions =
+        createGameQuestions();
+
+
+    currentQuestionIndex = 0;
+
+    score = 0;
+
+    correctAnswers = 0;
+
+    errors = 0;
+
+    streak = 0;
+
+    bestStreak = 0;
+
+    answered = false;
+
+    mistakes = {};
+
+
+    document
+    .getElementById("totalQuestions")
+    .textContent =
+        gameQuestions.length;
+
+
+    homeScreen
+    .classList
+    .remove("active");
+
+    resultScreen
+    .classList
+    .remove("active");
+
+    gameScreen
+    .classList
+    .add("active");
+
+
+    updateStats();
+
+    loadQuestion();
+
+}
+
+
+/* =========================================================
+   CARGAR PREGUNTA
+========================================================= */
+
+function loadQuestion() {
+
+    answered = false;
+
+    const question =
+        gameQuestions[
+            currentQuestionIndex
+        ];
+
+
+    document
+    .getElementById("currentQuestion")
+    .textContent =
+        currentQuestionIndex + 1;
+
+
+    questionText.textContent =
+        question.question;
+
+
+    categoryElement.textContent =
+        question.category;
+
+
+    difficultyElement.textContent =
+        question.difficulty;
+
+
+    if (
+        question.difficulty ===
+        "Pesadilla"
+    ) {
+
+        difficultyElement
+        .classList
+        .add("nightmare-tag");
+
+    } else {
+
+        difficultyElement
+        .classList
+        .remove("nightmare-tag");
+
+    }
+
+
+    answersContainer.innerHTML = "";
+
+
+    feedback.className =
+        "feedback";
+
+
+    nextContainer
+    .classList
+    .remove("show");
+
+
+    /*
+        Crear respuestas.
+
+        El orden ya fue mezclado por
+        shuffleAnswers().
+    */
+
+    question.answers.forEach(
+        (answer, index) => {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "answer";
+
+
+            const letter =
+                String.fromCharCode(
+                    65 + index
+                );
+
+
+            button.innerHTML = `
+
+                <span class="answer-letter">
+                    ${letter}
+                </span>
+
+                <span>
+                    ${answer}
+                </span>
+
+            `;
+
+
+            button.addEventListener(
+                "click",
+                () =>
+                    selectAnswer(index)
+            );
+
+
+            answersContainer
+            .appendChild(button);
+
+        }
+    );
+
+
+    /*
+        Actualizar progreso.
+    */
+
+    const percentage =
+        (
+            currentQuestionIndex /
+            gameQuestions.length
+        ) * 100;
+
+
+    document
+    .getElementById("progress")
+    .style.width =
+        percentage + "%";
+
+}
+
+
+/* =========================================================
+   RESPONDER
+========================================================= */
+
+function selectAnswer(
+    selectedIndex
+) {
+
+    if (answered) {
+
+        return;
+
+    }
+
+
+    answered = true;
+
+
+    const question =
+        gameQuestions[
+            currentQuestionIndex
+        ];
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".answer"
+        );
+
+
+    buttons.forEach(
+        button => {
+
+            button.disabled = true;
+
+        }
+    );
+
+
+    /*
+        Mostrar siempre la respuesta correcta.
+    */
+
+    buttons[
+        question.correct
+    ]
+    .classList
+    .add("correct");
+
+
+    if (
+        selectedIndex ===
+        question.correct
+    ) {
+
+        correctAnswers++;
+
+        streak++;
+
+
+        if (
+            streak >
+            bestStreak
+        ) {
+
+            bestStreak =
+                streak;
+
+        }
+
+
+        /*
+            Puntuación progresiva.
+        */
+
+        const points =
+            100 +
+            (
+                (streak - 1) *
+                25
+            );
+
+
+        score += points;
+
+
+        feedback.className =
+            "feedback correct show";
+
+
+        feedbackTitle.textContent =
+            "Respuesta correcta. " +
+            "+" +
+            points +
+            " puntos";
+
+
+        feedbackText.textContent =
+            question.feedback;
+
+
+    } else {
+
+        errors++;
+
+        streak = 0;
+
+
+        buttons[
+            selectedIndex
+        ]
+        .classList
+        .add("incorrect");
+
+
+        /*
+            Registrar error.
+        */
+
+        if (
+            !mistakes[
+                question.category
+            ]
+        ) {
+
+            mistakes[
+                question.category
+            ] = 0;
+
+        }
+
+
+        mistakes[
+            question.category
+        ]++;
+
+
+        feedback.className =
+            "feedback incorrect show";
+
+
+        feedbackTitle.textContent =
+            "Respuesta incorrecta";
+
+
+        feedbackText.textContent =
+            "La respuesta correcta es: " +
+            question.answers[
+                question.correct
+            ] +
+            ". " +
+            question.feedback;
+
+    }
+
+
+    updateStats();
+
+    nextContainer
+    .classList
+    .add("show");
+
+}
+
+
+/* =========================================================
+   ACTUALIZAR ESTADÍSTICAS
+========================================================= */
+
+function updateStats() {
+
+    document
+    .getElementById("score")
+    .textContent =
+        score;
+
+
+    document
+    .getElementById("streak")
+    .textContent =
+        streak;
+
+
+    document
+    .getElementById("errors")
+    .textContent =
+        errors;
+
+}
+
+
+/* =========================================================
+   SIGUIENTE PREGUNTA
+========================================================= */
+
+function nextQuestion() {
+
+    currentQuestionIndex++;
+
+
+    if (
+        currentQuestionIndex >=
+        gameQuestions.length
+    ) {
+
+        showResults();
+
+        return;
+
+    }
+
+
+    loadQuestion();
+
+}
+
+
+/* =========================================================
+   DESCRIPCIÓN DEL DESEMPEÑO
+========================================================= */
+
+function getPerformanceDescription(
+    percentage
+) {
+
+    if (percentage < 40) {
+
+        return {
+            level: "Nivel inicial",
+
+            description:
+                "El desempeño indica que todavía existen dificultades importantes en conocimientos fundamentales de seguridad vial. Se recomienda reforzar las normas básicas, la conducción defensiva y la identificación de situaciones de riesgo."
+        };
+
+    }
+
+
+    if (percentage < 60) {
+
+        return {
+            level: "Nivel básico",
+
+            description:
+                "El desempeño demuestra conocimientos básicos, aunque todavía existen áreas que requieren mayor atención. Es recomendable revisar las situaciones en las que se produjeron errores y fortalecer la toma de decisiones preventivas."
+        };
+
+    }
+
+
+    if (percentage < 75) {
+
+        return {
+            level: "Nivel intermedio",
+
+            description:
+                "El desempeño es satisfactorio. Demuestras una comprensión razonable de los principios de seguridad vial, aunque todavía puedes mejorar tu capacidad para analizar situaciones menos evidentes."
+        };
+
+    }
+
+
+    if (percentage < 90) {
+
+        return {
+            level: "Nivel avanzado",
+
+            description:
+                "El desempeño es muy bueno. Demuestras una sólida comprensión de la seguridad vial y una buena capacidad para tomar decisiones preventivas. Aún existen algunos aspectos que pueden perfeccionarse."
+        };
+
+    }
+
+
+    if (percentage < 100) {
+
+        return {
+            level: "Nivel sobresaliente",
+
+            description:
+                "El desempeño es excelente. Has demostrado un dominio amplio de los principios de seguridad vial y una capacidad elevada para identificar conductas seguras ante diferentes situaciones."
+        };
+
+    }
+
+
+    return {
+
+        level:
+            "Dominio excepcional",
+
+        description:
+            "El desempeño es excepcional. Has respondido correctamente a toda la evaluación y demuestras un dominio sobresaliente de los principios de prevención y seguridad vial."
+
+    };
+
+}
+
+
+/* =========================================================
+   RESULTADOS
+========================================================= */
+
+function showResults() {
+
+    gameScreen
+    .classList
+    .remove("active");
+
+
+    resultScreen
+    .classList
+    .add("active");
+
+
+    const total =
+        gameQuestions.length;
+
+
+    const percentage =
+        Math.round(
+            (
+                correctAnswers /
+                total
+            ) * 100
+        );
+
+
+    /*
+        Promedio de puntos por pregunta.
+    */
+
+    const averagePoints =
+        Math.round(
+            score /
+            total
+        );
+
+
+    document
+    .getElementById("finalScore")
+    .textContent =
+        score;
+
+
+    document
+    .getElementById("finalPercentage")
+    .textContent =
+        percentage + "%";
+
+
+    document
+    .getElementById("finalCorrect")
+    .textContent =
+        correctAnswers;
+
+
+    document
+    .getElementById("finalAveragePoints")
+    .textContent =
+        averagePoints;
+
+
+    document
+    .getElementById("averageLabel")
+    .textContent =
+        percentage + "%";
+
+
+    /*
+        Barra de promedio.
+    */
+
+    document
+    .getElementById("averageFill")
+    .style.width =
+        percentage + "%";
+
+
+    /*
+        Nivel.
+    */
+
+    const performance =
+        getPerformanceDescription(
+            percentage
+        );
+
+
+    document
+    .getElementById("knowledgeLevel")
+    .textContent =
+        performance.level;
+
+
+    document
+    .getElementById(
+        "performanceDescription"
+    )
+    .textContent =
+        performance.description;
+
+
+    /*
+        Actualizar insignias.
+    */
+
+    updateBadges(
+        percentage,
+        bestStreak
+    );
+
+
+    /*
+        Recomendaciones.
+    */
+
+    generateRecommendations();
+
+}
+
+
+/* =========================================================
+   INSIGNIAS
+========================================================= */
+
+function updateBadges(
+    percentage,
+    bestStreak
+) {
+
+    const badges = [
+
+        "badgePerfect",
+
+        "badgeSafe",
+
+        "badgeExpert",
+
+        "badgeStreak"
+
+    ];
+
+
+    badges.forEach(
+        id => {
+
+            document
+            .getElementById(id)
+            .classList
+            .add("locked");
+
+        }
+    );
+
+
+    if (
+        percentage === 100
+    ) {
+
+        document
+        .getElementById(
+            "badgePerfect"
+        )
+        .classList
+        .remove("locked");
+
+    }
+
+
+    if (
+        percentage >= 80
+    ) {
+
+        document
+        .getElementById(
+            "badgeSafe"
+        )
+        .classList
+        .remove("locked");
+
+    }
+
+
+    if (
+        percentage >= 90
+    ) {
+
+        document
+        .getElementById(
+            "badgeExpert"
+        )
+        .classList
+        .remove("locked");
+
+    }
+
+
+    if (
+        bestStreak >= 5
+    ) {
+
+        document
+        .getElementById(
+            "badgeStreak"
+        )
+        .classList
+        .remove("locked");
+
+    }
+
+}
+
+
+/* =========================================================
+   RECOMENDACIONES
+========================================================= */
+
+function generateRecommendations() {
+
+    const list =
+        document.getElementById(
+            "recommendationList"
+        );
+
+
+    const recommendations = {
+
+        "Señales de tránsito":
+        "Revisa las señales de advertencia, prioridad, prohibición y obligación.",
+
+        "Límites de velocidad":
+        "Refuerza el concepto de velocidad segura y la necesidad de adaptarla a las condiciones de la vía.",
+
+        "Distancias de seguridad":
+        "Practica el mantenimiento de una distancia suficiente para reaccionar y detener el vehículo.",
+
+        "Condiciones climáticas":
+        "Repasa las técnicas de conducción durante lluvia, niebla y condiciones de visibilidad reducida.",
+
+        "Conducción nocturna":
+        "Refuerza el uso correcto de las luces y las técnicas para conducir con visibilidad limitada.",
+
+        "Cinturón de seguridad":
+        "Recuerda comprobar que todos los ocupantes utilicen correctamente el cinturón.",
+
+        "Distracciones al volante":
+        "Evita utilizar teléfonos, manipular objetos o realizar actividades que aparten tu atención de la carretera.",
+
+        "Accidentes":
+        "Repasa cómo proteger una escena, solicitar asistencia y evitar una segunda colisión.",
+
+        "Emergencias":
+        "Practica qué información es útil proporcionar a los servicios de emergencia.",
+
+        "Fatiga":
+        "Aprende a reconocer la somnolencia y cuándo es necesario detenerse para descansar.",
+
+        "Alcohol y sustancias":
+        "Nunca conduzcas cuando el alcohol, medicamentos u otras sustancias puedan afectar tus capacidades.",
+
+        "Peatones":
+        "Refuerza la anticipación y la protección de los peatones, especialmente en zonas de riesgo.",
+
+        "Ciclistas":
+        "Mantén una separación segura y realiza adelantamientos únicamente cuando exista espacio suficiente.",
+
+        "Zonas escolares":
+        "Extrema la precaución en lugares donde exista presencia de niños.",
+
+        "Motociclistas":
+        "Presta especial atención a las motocicletas y verifica cuidadosamente los puntos de baja visibilidad.",
+
+        "Mantenimiento":
+        "Revisa periódicamente neumáticos, luces, frenos y otros elementos esenciales de seguridad.",
+
+        "Mantenimiento del vehículo":
+        "Realiza revisiones preventivas de neumáticos, luces, frenos y sistemas de advertencia.",
+
+        "Conducción defensiva":
+        "Mantén márgenes de seguridad y evita responder de forma agresiva a otros conductores.",
+
+        "Seguridad vial":
+        "Continúa practicando la toma de decisiones preventivas y la anticipación de posibles riesgos."
+
+    };
+
+
+    const sorted =
+        Object.entries(mistakes)
+        .sort(
+            (a, b) =>
+                b[1] - a[1]
+        );
+
+
+    list.innerHTML = "";
+
+
+    if (
+        sorted.length === 0
+    ) {
+
+        const li =
+            document.createElement(
+                "li"
+            );
+
+
+        li.textContent =
+            "No se registraron errores. Mantienes un desempeño consistente en las áreas evaluadas.";
+
+
+        list.appendChild(li);
+
+        return;
+
+    }
+
+
+    sorted
+    .slice(0, 5)
+    .forEach(
+        ([category]) => {
+
+            if (
+                !recommendations[
+                    category
+                ]
+            ) {
+
+                return;
+
+            }
+
+
+            const li =
+                document.createElement(
+                    "li"
+                );
+
+
+            li.textContent =
+                recommendations[
+                    category
+                ];
+
+
+            list.appendChild(li);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   REINICIAR
+========================================================= */
+
+function restartGame() {
+
+    resultScreen
+    .classList
+    .remove("active");
+
+    gameScreen
+    .classList
+    .add("active");
+
+    startGame();
+
+}
+
+
+/* =========================================================
+   VOLVER AL INICIO
+========================================================= */
+
+function goHome() {
+
+    gameScreen
+    .classList
+    .remove("active");
+
+    resultScreen
+    .classList
+    .remove("active");
+
+    homeScreen
+    .classList
+    .add("active");
+
+}
+
+
+/* =========================================================
+   ATAJOS DE TECLADO
+=========================================================
+
+   A, B, C y D permiten responder utilizando el teclado.
+
+   Como las respuestas se mezclan, la letra corresponde
+   siempre a la posición actual mostrada en pantalla.
+
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            !gameScreen
+            .classList
+            .contains("active")
+            ||
+            answered
+        ) {
+
+            return;
+
+        }
+
+
+        const keys = {
+
+            a: 0,
+
+            b: 1,
+
+            c: 2,
+
+            d: 3
+
+        };
+
+
+        const key =
+            event.key.toLowerCase();
+
+
+        if (
+            keys[key] !== undefined
+        ) {
+
+            selectAnswer(
+                keys[key]
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INICIALIZACIÓN
+========================================================= */
+
+updateQuestionCountOptions();
+
+</script>
+
+</body>
+</html>
